@@ -152,13 +152,21 @@ namespace Lab5.Task2
             List<TouringTrip> list = new List<TouringTrip>();
             bool save_edit = false;//якщо були зміни запитує чи потрібно їх бререгти
             bool printFile = false;// якщо є одинакові ID виводить вміст файла 
-
             using (StreamReader f = new StreamReader(FILE_NAME))
             {
                 List<string> bad_id = new List<string>();
                 List<string[]> lineFile = new List<string[]>();
                 int i = 1;
                 bool bad;
+                using (StreamReader a = new StreamReader(FILE_NAME))
+                {
+                    string ss;
+                    while ((ss = a.ReadLine()) != null) // запис рядка з бази в масив
+                    {
+                        lineFile.Add(ss.Split(';').Select(tag => tag.Trim()).Where(tag => !string.IsNullOrEmpty(tag)).ToArray());
+                    }
+                    a.Close();
+                }
                 while ((s = f.ReadLine()) != null) // запис рядка з бази в масив
                 {
                     string[] x = s.Split(';').Select(tag => tag.Trim()).Where(tag => !string.IsNullOrEmpty(tag)).ToArray();
@@ -178,20 +186,8 @@ namespace Lab5.Task2
                                 {
                                     if (!printFile) // якщо список ще не робився
                                     {
-                                        using (StreamReader a = new StreamReader(FILE_NAME))
-                                        {
-                                            string ss;
-                                            while ((ss = a.ReadLine()) != null) // запис рядка з бази в масив
-                                            {
-                                                lineFile.Add(ss.Split(';').Select(tag => tag.Trim()).Where(tag => !string.IsNullOrEmpty(tag)).ToArray());
-                                            }
-                                            a.Close();
-                                        }
                                         printFile = true;
                                     }
-                                    string[] tmp = lineFile[i - 1];
-                                    tmp[0] = x[0];
-                                    lineFile[i - 1] = tmp;
                                     x[0] += "__bad_id";
                                 }
                                 list.Add(new TouringTrip(x[0], x[1], x[2], x[3], x[4], x[5]));
@@ -250,23 +246,8 @@ namespace Lab5.Task2
                                 {
                                     Console.Write(item + "; ");
                                 }
-                                if (printFile)
-                                {
-                                    Console.Write("\n\n--> ");
-                                    foreach (var item2 in lineFile[i - 1])
-                                    {
-                                        Console.Write("{0}; ", item2);
-                                    }
-                                    Console.WriteLine();
-                                }
-                                else
-                                {
-                                    Console.Write("\n--> " + x[0]);
-                                    for (int x_i = 1; x_i < x.Length; x_i++)
-                                    {
-                                        Console.Write("; " + x[x_i]);
-                                    }
-                                }
+                                Console.WriteLine("\n\n--> {0}", s);
+                                Console.WriteLine("\nПричина помилки: " + e.Message);
                                 if (index == -1)
                                 {
                                     string errors = e.StackTrace.Split('.', '(').Where(d => d.Contains("set_")).ToArray()[0].Substring(4);
@@ -295,6 +276,7 @@ namespace Lab5.Task2
                                 }
                                 else
                                 {
+                                    bad = false;
                                     lineFile.RemoveAt(i - 1);
                                     i--;
                                 }
