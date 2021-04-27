@@ -42,7 +42,7 @@ namespace Lab5.Task2
             get => id;
             set
             {
-                if (value == null || value == "" || value.Equals("null"))
+                if (TestLengthIsNull(value, iL))
                 {
                     try
                     {
@@ -66,7 +66,7 @@ namespace Lab5.Task2
                         return;
                     }
                 }
-                else if (!int.TryParse(value, out _))
+                if (!int.TryParse(value, out _))
                 {
                     if (value.Contains("bad_id"))
                     {
@@ -77,13 +77,12 @@ namespace Lab5.Task2
                         throw new Exception("ID не число");
                     }
                 }
-                if (TestLengthIsNull(value, iL))
-                {
-                    id = "null";
-                    return;
-                }
                 else
                 {
+                    if (int.Parse(value) < 0)
+                    {
+                        throw new Exception("ID не може бути відємним числом");
+                    }
                     id = value;
                 }
             }

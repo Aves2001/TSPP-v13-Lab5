@@ -47,14 +47,14 @@ namespace Lab5.Task2
                 {
                     throw new Exception("Рік має бути вказаний числом");
                 }
-                // перевіряє чи вказаний рік поступання не більший за теперішній і чи не менший за 1980
+                // перевіряє чи вказаний рік поступання не більший за теперішній і чи не менший за 1000
                 if (int.Parse(value) > DateTime.Today.Year)
                 {
-                    throw new Exception("Рік не може бути більший за теперішній. Вказаний рік: " + value);
+                    throw new Exception("Рік не може бути більший за теперішній");
                 }
                 else if (int.Parse(value) < 1000)
                 {
-                    throw new Exception("Рік: \"" + value + "\" менший за 1000");
+                    throw new Exception("Рік не може бути менший за 1000");
                 }
                 year = value;
             }
@@ -71,7 +71,11 @@ namespace Lab5.Task2
                 }
                 else if (!TestIsNumber(value))
                 {
-                    throw new Exception("\nкількість концертів має бути вказана числом");
+                    throw new Exception("\nКількість концертів має бути вказана числом");
+                }
+                if (int.Parse(value) < 0)
+                {
+                    throw new Exception("Вказана кількість концертів не може бути меншою нулю");
                 }
                 numberOfConcerts = value;
             }
