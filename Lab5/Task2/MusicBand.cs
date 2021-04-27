@@ -189,9 +189,6 @@ namespace Lab5.Task2
                                         }
                                         printFile = true;
                                     }
-                                    string[] tmp = lineFile[i - 1];
-                                    tmp[0] = x[0];
-                                    lineFile[i - 1] = tmp;
                                     x[0] += "__bad_id";
                                 }
                                 list.Add(new TouringTrip(x[0], x[1], x[2], x[3], x[4], x[5]));
@@ -250,23 +247,8 @@ namespace Lab5.Task2
                                 {
                                     Console.Write(item + "; ");
                                 }
-                                if (printFile)
-                                {
-                                    Console.Write("\n\n--> ");
-                                    foreach (var item2 in lineFile[i - 1])
-                                    {
-                                        Console.Write("{0}; ", item2);
-                                    }
-                                    Console.WriteLine();
-                                }
-                                else
-                                {
-                                    Console.Write("\n--> " + x[0]);
-                                    for (int x_i = 1; x_i < x.Length; x_i++)
-                                    {
-                                        Console.Write("; " + x[x_i]);
-                                    }
-                                }
+                                Console.WriteLine("\n\n--> {0}", s);
+                                Console.WriteLine("\nПричина помилки: " + e.Message);
                                 if (index == -1)
                                 {
                                     string errors = e.StackTrace.Split('.', '(').Where(d => d.Contains("set_")).ToArray()[0].Substring(4);
