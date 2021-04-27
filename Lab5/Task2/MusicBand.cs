@@ -77,14 +77,11 @@ namespace Lab5.Task2
                         throw new Exception("ID не число");
                     }
                 }
-                else
+                if (int.Parse(value) < 0)
                 {
-                    if (int.Parse(value) < 0)
-                    {
-                        throw new Exception("ID не може бути відємним числом");
-                    }
-                    id = value;
+                    throw new Exception("ID не може бути відємним числом");
                 }
+                id = value;
             }
         }
         public string Title
@@ -162,7 +159,7 @@ namespace Lab5.Task2
             using (StreamReader f = new StreamReader(FILE_NAME))
             {
                 List<string> bad_id = new List<string>();
-                List<string> lineFile = new List<string>();
+                List<string[]> lineFile = new List<string[]>();
                 int i = 1;
                 bool bad;
                 while ((s = f.ReadLine()) != null) // запис рядка з бази в масив
@@ -187,14 +184,19 @@ namespace Lab5.Task2
                                         using (StreamReader a = new StreamReader(FILE_NAME))
                                         {
                                             string ss;
-                                            int z = 1;
                                             while ((ss = a.ReadLine()) != null) // запис рядка з бази в масив
                                             {
-                                                lineFile.Add(string.Format("№_{0}: {1}", z++, ss));
+                                                lineFile.Add(ss.Split(';').Select(tag => tag.Trim()).Where(tag => !string.IsNullOrEmpty(tag)).ToArray());
                                             }
                                             a.Close();
                                         }
                                         printFile = true;
+                                    }
+                                    if (printFile)
+                                    {
+                                        string[] tmp = lineFile[i - 1];
+                                        tmp[0] = x[0];
+                                        lineFile[i - 1] = tmp;
                                     }
                                     x[0] += "__bad_id";
                                 }
@@ -235,10 +237,16 @@ namespace Lab5.Task2
                                 Console.Clear();
                                 if (printFile)
                                 {
+                                    int z = 1;
                                     Console.WriteLine("\tВміст бази даних:\n");
                                     foreach (var item in lineFile)
                                     {
-                                        Console.WriteLine(item);
+                                        Console.Write("№_{0}  ", z++);
+                                        foreach (var item2 in item)
+                                        {
+                                            Console.Write("{0}; ", item2);
+                                        }
+                                        Console.WriteLine();
                                     }
                                 }
                                 Console.WriteLine("\nПомилка в рядку під номером {0}:\n", i);
@@ -246,8 +254,24 @@ namespace Lab5.Task2
                                 {
                                     Console.Write(item + "; ");
                                 }
-                                Console.WriteLine("\n\n--> {0}", s);
-                                Console.WriteLine("\nПричина помилки: " + e.Message);
+                                if (printFile)
+                                {
+                                    Console.Write("\n\n--> ");
+                                    foreach (var item2 in lineFile[i - 1])
+                                    {
+                                        Console.Write("{0}; ", item2);
+                                    }
+                                    Console.WriteLine();
+                                }
+                                else
+                                {
+                                    Console.Write("\n--> " + x[0]);
+                                    for (int x_i = 1; x_i < x.Length; x_i++)
+                                    {
+                                        Console.Write("; " + x[x_i]);
+                                    }
+                                }
+                                Console.WriteLine("\n\nПричина помилки: " + e.Message);
                                 if (index == -1)
                                 {
                                     string errors = e.StackTrace.Split('.', '(').Where(d => d.Contains("set_")).ToArray()[0].Substring(4);
@@ -268,6 +292,10 @@ namespace Lab5.Task2
                                     Console.WriteLine("\n" + y_ua[index]);
                                     Console.Write(">");
                                     x[index] = Console.ReadLine();
+                                    if (index == 0)
+                                    {
+                                        bad_id.Insert(i - 1, x[0]);
+                                    }
                                 }
                                 else
                                 {
@@ -366,7 +394,7 @@ namespace Lab5.Task2
                     catch (Exception e)
                     {
                         Console.WriteLine(e.Message);
-                        Console.WriteLine("\nВведіть ще раз:");
+                        Console.WriteLine("Введіть ще раз:");
                         bad = true;
                     }
                 } while (bad);
@@ -378,9 +406,10 @@ namespace Lab5.Task2
                     {
                         add[0].LastNameOfTheHead = Read(lL, "Прізвище керівника:");
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
-                        Console.WriteLine("\nВведіть ще раз:");
+                        Console.WriteLine(e.Message);
+                        Console.WriteLine("Введіть ще раз:");
                         bad = true;
                     }
                 } while (bad);
@@ -392,9 +421,10 @@ namespace Lab5.Task2
                     {
                         add[0].City = Read(cL, "Місто:");
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
-                        Console.WriteLine("\nВведіть ще раз:");
+                        Console.WriteLine(e.Message);
+                        Console.WriteLine("Введіть ще раз:");
                         bad = true;
                     }
                 } while (bad);
@@ -406,9 +436,10 @@ namespace Lab5.Task2
                     {
                         add[0].Year = Read(yL, "Рік:");
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
-                        Console.WriteLine("\nВведіть ще раз:");
+                        Console.WriteLine(e.Message);
+                        Console.WriteLine("Введіть ще раз:");
                         bad = true;
                     }
                 } while (bad);
@@ -420,9 +451,10 @@ namespace Lab5.Task2
                     {
                         add[0].NumberOfConcerts = Read(nL, "Кількість:");
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
-                        Console.WriteLine("\nВведіть ще раз:");
+                        Console.WriteLine(e.Message);
+                        Console.WriteLine("Введіть ще раз:");
                         bad = true;
                     }
                 } while (bad);
@@ -523,8 +555,8 @@ namespace Lab5.Task2
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine(e.Message);
-                        Console.WriteLine("\nВведіть ще раз:");
+                        Console.WriteLine("\n" + e.Message);
+                        Console.WriteLine("Введіть ще раз:");
                         bad = true;
                     }
                 } while (bad);
